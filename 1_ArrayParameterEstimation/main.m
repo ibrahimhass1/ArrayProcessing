@@ -1,54 +1,58 @@
 %% Q3, implement ESPRIT algorithm
 % Generate data using the genData function
 [M, N, Delta, theta, f, SNR] = deal(5, 20, 0.5, [-20; 30], [0.1; 0.3], 20);
-[X, A, S] = genData(M, N, Delta, theta, f, SNR);
+[X, A, S] = genDataKR(M, N, Delta, theta, f, SNR);
 % [X, A, S] = genDataKR(M, N, Delta, theta, f, SNR);
 % size(X)
 % % Call the esprit function
 % AoA = esprit(X, 2)
 % freq = espritfreq(X, 2)
 
+% Apply temporal smoothing, with a factor m
+X = eye(4)
+m = 1;
+Xs = temporal_smoothing(X,m)
 
 %% Q2, effect of number of samples on the singular values
-sv_N20 = 0;
-sv_N40 = 0;
-sv_N60 = 0;
-sv_N100 = 0;
-
-for i=1:100
-    [X,A,S] = genData(5,20,.5,[-20; 30],[.1;.3],20);
-    sv_N20=sv_N20+svd(X);
-    [X,A,S] = genData(5,40,.5,[-20; 30],[.1;.3],20);
-    sv_N40=sv_N40+svd(X);
-    [X,A,S] = genData(5,80,.5,[-20; 30],[.1;.3],20);
-    sv_N60=sv_N60+svd(X);
-    [X,A,S] = genData(5,160,.5,[-20; 30],[.1;.3],20);
-    sv_N100=sv_N100+svd(X);
-end
-sv_N20 = sv_N20/100
-sv_N40 = sv_N40/100
-sv_N60 = sv_N60/100
-sv_N100 = sv_N100/100
-
-figure
-hold on
-plot(log10(sv_N100), '.', 'MarkerSize', 20)
-plot(log10(sv_N60), '.', 'MarkerSize', 20)
-plot(log10(sv_N40), '.', 'MarkerSize', 20)
-
-plot(log10(sv_N20), '.', 'MarkerSize', 20)
-
-
-xlabel("Singular value index")
-xticks(1:5) 
-ylabel("Log10 of singular value")
-legend('N=160', 'N=80', 'N=40', 'N=20')
-title("Singular values for different number of samples")
-hold off
-
-10^mean(log10(sv_N100)-log10(sv_N20))
-10^mean(log10(sv_N60)-log10(sv_N20))
-10^mean(log10(sv_N40)-log10(sv_N20))
+% sv_N20 = 0;
+% sv_N40 = 0;
+% sv_N60 = 0;
+% sv_N100 = 0;
+% 
+% for i=1:100
+%     [X,A,S] = genData(5,20,.5,[-20; 30],[.1;.3],20);
+%     sv_N20=sv_N20+svd(X);
+%     [X,A,S] = genData(5,40,.5,[-20; 30],[.1;.3],20);
+%     sv_N40=sv_N40+svd(X);
+%     [X,A,S] = genData(5,80,.5,[-20; 30],[.1;.3],20);
+%     sv_N60=sv_N60+svd(X);
+%     [X,A,S] = genData(5,160,.5,[-20; 30],[.1;.3],20);
+%     sv_N100=sv_N100+svd(X);
+% end
+% sv_N20 = sv_N20/100
+% sv_N40 = sv_N40/100
+% sv_N60 = sv_N60/100
+% sv_N100 = sv_N100/100
+% 
+% figure
+% hold on
+% plot(log10(sv_N100), '.', 'MarkerSize', 20)
+% plot(log10(sv_N60), '.', 'MarkerSize', 20)
+% plot(log10(sv_N40), '.', 'MarkerSize', 20)
+% 
+% plot(log10(sv_N20), '.', 'MarkerSize', 20)
+% 
+% 
+% xlabel("Singular value index")
+% xticks(1:5) 
+% ylabel("Log10 of singular value")
+% legend('N=160', 'N=80', 'N=40', 'N=20')
+% title("Singular values for different number of samples")
+% hold off
+% 
+% 10^mean(log10(sv_N100)-log10(sv_N20))
+% 10^mean(log10(sv_N60)-log10(sv_N20))
+% 10^mean(log10(sv_N40)-log10(sv_N20))
 
 %% Q2, effect of number of antennas on the singular values
 % sv_A15 = 0;
