@@ -1,7 +1,76 @@
 %% Q3, implement ESPRIT algorithm
 % Generate data using the genData function
-[M, N, Delta, theta, f, SNR] = deal(5, 20, 0.5, [-20; 30], [0.1; 0.3], 20);
-[X, A, S] = genDataKR(M, N, Delta, theta, f, SNR);
+[M, N, Delta, theta, f, SNR] = deal(5, 20, 0.5, [-20; 30], [0.1; 0.3], 10);
+[X, A, S] = genData(M, N, Delta, theta, f, SNR);
+
+%% Zero-forcing beamformer with A is known
+
+% % Obtain estimates of source directions, sort such that signal estimate
+% % will have the same order
+% DoA = sort(esprit(X,2));
+% % Construct zero-forcing beamformer
+% phi = 2*pi*Delta*sin(deg2rad(DoA));
+% A_hat = exp(1i*(0:M-1)'.*phi');
+% W = pinv(A_hat);
+% % Apply beamformer to obtain an estimate of S
+% S_hat = W*X;
+% 
+% %% Zero-forcing beamformer with S is known
+% 
+% % Obtain estimates of source directions, sort such that signal estimate
+% % will have the same order
+% freq = sort(espritfreq(X,2));
+% % Construct zero-forcing beamformer
+% S_hat =  exp(1i*2*pi*freq*(0:N-1));
+% % Apply beamformer to obtain an estimate of S
+% A_hat = X*pinv(S_hat);
+% 
+% i=1
+% for theta=-90:90
+%     exponent = 2*pi*Delta*sin(deg2rad(theta));
+%     a = exp(1i*(0:M-1)'.*exponent);
+%     y(i, :) = abs(W*a);
+%     i = i+1;
+% end
+% 
+% figure
+% hold on
+% plot(-90:90, y(:, 1))
+% plot(-90:90, y(:, 2))
+% xlabel("Theta(degree)")
+% ylabel("|y(theta)|")
+% hold off
+
+N = 500;
+s = ones([N 1]);
+
+qpsk_symbols = [-1-1i, 1-1i, -1+1i, 1+1i]./sqrt(2);
+
+for i=1:N
+    s(i) = qpsk_symbols(randi([1 4]));
+end
+
+P = 8;
+sigma = 0.5;
+X = gendata_conv(s,P,N,sigma);
+x = gendata_conv_2(s,P,N,sigma);
+rank(X)
+
+h = [1 -1 1 -1 1 -1 1 -1];
+H = diag(h);
+%S_hat = inv(H).*X;
+
+
+%% Wiener receiver
+
+R_x = X*X';
+r = X*x;
+
+w = inv(R_x);
+
+
+
+
 % [X, A, S] = genDataKR(M, N, Delta, theta, f, SNR);
 % size(X)
 % % Call the esprit function
@@ -9,9 +78,10 @@
 % freq = espritfreq(X, 2)
 
 % Apply temporal smoothing, with a factor m
-X = eye(4)
-m = 1;
-Xs = temporal_smoothing(X,m)
+% X = eye(4)
+% m = 1;
+% Xs = temporal_smoothing(X,m)
+
 
 %% Q2, effect of number of samples on the singular values
 % sv_N20 = 0;

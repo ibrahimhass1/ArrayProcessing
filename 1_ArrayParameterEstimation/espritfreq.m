@@ -2,7 +2,7 @@ function f = espritfreq(X,d)
 
     % Obtain single vector to construct X
     x = X(1, :);
-    
+    %% Todo make m data dependent
     m = 5;
     X=zeros([m length(x)-m]);
     for i=1:length(x)-m

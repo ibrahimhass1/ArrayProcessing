@@ -41,5 +41,5 @@ function [X,A,S] = genData(M,N,Delta,theta,f,SNR)
     
     % The measurement matrix is now given by the source signal scaled by the 
     % arra response plus the noise matrix
-    X = A*S+ Noise;
+    X = A*S + Noise;
 end
