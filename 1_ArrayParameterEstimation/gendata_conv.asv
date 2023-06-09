@@ -36,10 +36,11 @@ for column=1:N-1
         for i=1:N
             x = x + h(t-(i-1))*s(i);
         end 
+        x = x + sigma^2*((randn()+ randn()*1i)./sqrt(2));
+        %x = x+ wgn(1, 1, sigma^2, 'linear', 'complex');
         X(row, column) = x;
 
     end
+    X = Xwgn(2*P, N-1, sigma^2, 'linear', 'complex');
 end
-
-X = X + wgn(2*P, N-1, sigma^2, 'linear', 'complex');
 

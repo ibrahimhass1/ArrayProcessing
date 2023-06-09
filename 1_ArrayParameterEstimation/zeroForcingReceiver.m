@@ -1,4 +1,4 @@
-function s_hat = zeroForcingReceiver(h, X, N)
+function [S_hat, s_hat, s_raw] = zeroForcingReceiver(h, X, N)
 
 % Determine oversampling factor
 P = length(h)
@@ -17,6 +17,9 @@ s_hat(1) = S_hat(1,1);
 % As for the rest average over the 2 estimates
 s_hat(N) = S_hat(2, end);
 s_hat(2:N-1) = (S_hat(1, 2:end) + S_hat(2, 1:end-1))./2;
+
+% Also return raw estimates
+s_raw = s_hat;
 
 % Translate to nearest qpsk symbol
 for k = 1:N

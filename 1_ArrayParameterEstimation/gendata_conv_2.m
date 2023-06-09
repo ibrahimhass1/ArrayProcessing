@@ -12,6 +12,6 @@ function x = gendata_conv_2(s,P,N,sigma)
         x(i) = x(i);
     end
     
-    x = x + sigma^2*((randn([N 1])+ randn([N 1])*1i)./sqrt(2));
-
+   % x = x + sigma^2*((randn([N 1])+ randn([N 1])*1i)./sqrt(2));
+    x = x+ wgn(1, N, sigma^2, 'linear', 'complex');
 end
