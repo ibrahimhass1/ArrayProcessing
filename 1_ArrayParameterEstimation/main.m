@@ -1,8 +1,8 @@
 %% Q3, implement ESPRIT algorithm
 % Generate data using the genData function
-[M, N, Delta, theta, f, SNR] = deal(5, 20, 0.5, [-20; 30], [0.1; 0.3], 10);
-[X, A, S] = genData(M, N, Delta, theta, f, SNR);
-
+% [M, N, Delta, theta, f, SNR] = deal(5, 20, 0.5, [-20; 30], [0.1; 0.3], 10);
+% [X, A, S] = genData(M, N, Delta, theta, f, SNR);
+% ESPRIT_freq(X, 2)
 %% Zero-forcing beamformer with A is known
 
 % % Obtain estimates of source directions, sort such that signal estimate
@@ -50,23 +50,24 @@ for i=1:N
     s(i) = qpsk_symbols(randi([1 4]));
 end
 
-P = 8;
-sigma = 0.5;
+P = 4;
+sigma = 0.0;
 X = gendata_conv(s,P,N,sigma);
-x = gendata_conv_2(s,P,N,sigma);
+% x = gendata_conv_2(s,P,N,sigma);
 rank(X)
 
-h = [1 -1 1 -1 1 -1 1 -1];
-H = diag(h);
-%S_hat = inv(H).*X;
-
-
-%% Wiener receiver
-
-R_x = X*X';
-r = X*x;
-
-w = inv(R_x);
+h = [1; -1; 1; -1];
+nul = zeros([4 1]);
+H = [h, nul; nul, h]
+S_hat = pinv(H)*X;
+% 
+% 
+% %% Wiener receiver
+% 
+% R_x = X*X';
+% r = X*x;
+% 
+% w = inv(R_x);
 
 
 
@@ -83,7 +84,7 @@ w = inv(R_x);
 % Xs = temporal_smoothing(X,m)
 
 
-%% Q2, effect of number of samples on the singular values
+% % Q2, effect of number of samples on the singular values
 % sv_N20 = 0;
 % sv_N40 = 0;
 % sv_N60 = 0;
@@ -106,25 +107,25 @@ w = inv(R_x);
 % 
 % figure
 % hold on
-% plot(log10(sv_N100), '.', 'MarkerSize', 20)
-% plot(log10(sv_N60), '.', 'MarkerSize', 20)
-% plot(log10(sv_N40), '.', 'MarkerSize', 20)
+% plot((sv_N100), '.', 'MarkerSize', 20)
+% plot((sv_N60), '.', 'MarkerSize', 20)
+% plot((sv_N40), '.', 'MarkerSize', 20)
 % 
-% plot(log10(sv_N20), '.', 'MarkerSize', 20)
+% plot((sv_N20), '.', 'MarkerSize', 20)
 % 
 % 
 % xlabel("Singular value index")
 % xticks(1:5) 
-% ylabel("Log10 of singular value")
+% ylabel("Singular value")
 % legend('N=160', 'N=80', 'N=40', 'N=20')
-% title("Singular values for different number of samples")
+% title("Singular values of X for different number of samples")
 % hold off
 % 
 % 10^mean(log10(sv_N100)-log10(sv_N20))
 % 10^mean(log10(sv_N60)-log10(sv_N20))
 % 10^mean(log10(sv_N40)-log10(sv_N20))
-
-%% Q2, effect of number of antennas on the singular values
+% 
+% % Q2, effect of number of antennas on the singular values
 % sv_A15 = 0;
 % sv_A10 = 0;
 % sv_A5 = 0;
@@ -145,16 +146,16 @@ w = inv(R_x);
 % 
 % figure
 % hold on
-% plot(log(sv_A15), '.', 'MarkerSize', 20)
-% plot(log(sv_A10), '.', 'MarkerSize', 20)
-% plot(log(sv_A5), '.', 'MarkerSize', 20)
+% plot((sv_A15), '.', 'MarkerSize', 20)
+% plot((sv_A10), '.', 'MarkerSize', 20)
+% plot((sv_A5), '.', 'MarkerSize', 20)
 % 
 % 
 % xlabel("Singular value index")
 % xticks(1:15) 
-% ylabel("Log10 of singular value")
+% ylabel("Singular value")
 % legend('M=15', 'M=10', 'M=5')
-% title("Singular values for different number of antennas")
+% title("Singular values of X for different number of antennas")
 % hold off
 % 
 % 10^mean(log10(sv_A15(1:5))-log10(sv_A10(1:5)))
@@ -181,56 +182,58 @@ w = inv(R_x);
 % 
 % figure
 % hold on
-% plot(log10(sv_A50), '.', 'MarkerSize', 20)
-% plot(log10(sv_A10), '.', 'MarkerSize', 20)
-% plot(log10(sv_A1), '.', 'MarkerSize', 20)
+% plot((sv_A50), '.', 'MarkerSize', 20)
+% plot((sv_A10), '.', 'MarkerSize', 20)
+% plot((sv_A1), '.', 'MarkerSize', 20)
 % 
 % xlabel("Singular value index")
 % xticks(1:5) 
-% ylabel("Log10 of singular value")
+% ylabel("Singular value")
 % legend('50 deg', '10 deg', '1 deg')
-% title("Singular values for different angles between sources")
+% title("Singular values of X for different angles between sources")
 % hold off
-% 
 
-%% Q2, effect of the source frequency difference on the singular values
-% sv_f2 = 0;
+
+%% Q2, effect of the source frequency difference on the singular values;
 % sv_f1 = 0;
 % sv_f05 = 0;
+% sv_f025 = 0;
 % sv_f01 = 0;
 % sv_f001 = 0;
 % 
 % for i=1:100
-%     [X,A,S] = genData(5,20,.5,[-20; 30],[.1;.3],20);
-%     sv_f2 =sv_f2 +svd(X);
 %     [X,A,S] = genData(5,20,.5,[-20; 30],[.2;.3],20);
 %     sv_f1=sv_f1+svd(X);
 %     [X,A,S] = genData(5,20,.5,[-20; 30],[.25;.3],20);
 %     sv_f05=sv_f05+svd(X);
+%     [X,A,S] = genData(5,20,.5,[-20; 30],[.1;.3],20);
+%     sv_f025 =sv_f025 +svd(X);
 %     [X,A,S] = genData(5,20,.5,[-20; 30],[.29;.3],20);
 %     sv_f01=sv_f01+svd(X);
-%     [X,A,S] = genData(5,20,.5,[-20; 30],[.29;.3],20);
+%     [X,A,S] = genData(5,20,.5,[-20; 30],[.299;.3],20);
 %     sv_f001=sv_f001+svd(X);
 % end
-% sv_f2 = sv_f2/100
 % sv_f1 = sv_f1/100
 % sv_f05 = sv_f05/100
+% sv_f025 = sv_f025/100
 % sv_f01 = sv_f01/100
+% sv_f001 = sv_f001/100
 % 
 % 
 % figure
 % hold on
-% plot(log10(sv_f2), '.', 'MarkerSize', 20)
-% plot(log10(sv_f1), '.', 'MarkerSize', 20)
-% plot(log10(sv_f05), '.', 'MarkerSize', 20)
-% plot(log10(sv_f01), '.', 'MarkerSize', 20)
+% plot((sv_f1), '.', 'MarkerSize', 20)
+% plot((sv_f05), '.', 'MarkerSize', 20)
+% plot((sv_f025), '.', 'MarkerSize', 20)
+% plot((sv_f01), '.', 'MarkerSize', 20)
+% plot((sv_f001), '.', 'MarkerSize', 20)
 % 
 % 
 % xlabel("Singular value index")
 % xticks(1:5) 
-% ylabel("Log10 of singular value")
-% legend('.2', '.1', '.05', '.01')
-% title("Singular values for different frequency differences")
+% ylabel("Singular value")
+% legend('.1', '.05', '0.25', '.01', '.001')
+% title("Singular values of X for different frequency differences")
 % hold off
 
 
