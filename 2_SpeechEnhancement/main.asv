@@ -1,0 +1,33 @@
+%% Load data set
+% Retreive data from audio file
+[s_t, Fs] = audioread('data\clean_speech.wav');
+% Obtain room impulse responses
+load('data\impulse_responses.mat')
+
+%% Set processing parameters
+% frame duration in ms
+frame_duration = 20;                 
+frame_size = floor(frame_duration*Fs/1000);
+
+% overlap-and-add frame percentage shift
+overlap_percentage = 50;
+overlap = frame_size*overlap_percentage/100;
+
+% define window type
+window = hamming(frame_size);
+
+% 
+% for i=1:size(h_target, 1)
+%     x_t(i, :) = conv(s_t, h_target(i, :));
+% end
+
+
+for n=1:overlap:length(s_t)-frame_size
+    s_windowed = s_t(n:n+frame_size).*wn
+end
+
+
+
+
+
+

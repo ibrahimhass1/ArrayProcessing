@@ -1,0 +1,9 @@
+function [s, x] = genData(speech , number_of_interferers, ...
+    noise_type, snr)
+
+switch lnoise_type:
+    case 
+
+
+end
+
