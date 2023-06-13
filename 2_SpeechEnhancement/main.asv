@@ -1,33 +1,29 @@
-%% Load data set
-% Retreive data from audio file
-[s_t, Fs] = audioread('data\clean_speech.wav');
-% Obtain room impulse responses
-load('data\impulse_responses.mat')
+%% Obtain clean speech signal, and generate noise microphone signals
+[s_t, x_t] = genData('data\clean_speech.wav', 'data\babble_noise.wav', ...
+    0, 'speech_shaped', 0);
 
-%% Set processing parameters
-% frame duration in ms
-frame_duration = 20;                 
-frame_size = floor(frame_duration*Fs/1000);
-
-% overlap-and-add frame percentage shift
-overlap_percentage = 50;
-overlap = frame_size*overlap_percentage/100;
-
-% define window type
-window = hamming(frame_size);
-
-% 
-% for i=1:size(h_target, 1)
-%     x_t(i, :) = conv(s_t, h_target(i, :));
-% end
+%% Obtained Short-Time Fourier transform of time domains signals
+s = STFT(s_t, 16000, 20, 50, 'hamming');
+%x = STFT(x_t, 16000, 20, 50, 'hamming');
 
 
-for n=1:overlap:length(s_t)-frame_size
-    s_windowed = s_t(n:n+frame_size).*wn
-end
+%% Apply processing
+%
+%
+%
+
+
+
+%% Reconstruct signal, by taking the inverse Short-Time Fourier transform
+s_hat = iSTFT(s, 16000, 20, 50);
 
 
 
 
+
+
+Fs = 16000;
+
+soundsc(s_hat(4,Fs:3*Fs), Fs)
 
 
