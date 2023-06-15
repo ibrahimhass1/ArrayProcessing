@@ -1,0 +1,44 @@
+function [theta,f] = joint(X,d,m)
+% Joint estimation of direction and frequencies
+[M, ~] = size(X);
+
+[U,~,~] = svd(X,"econ");
+Utr = U(1:m*M,1:d);
+
+% Selection matrices
+I1=[eye(m-1),zeros(m-1,1)]; %I1 and I2 are for phi
+I2=[zeros(m-1,1),eye(m-1)];
+I3=[eye(M-1),zeros(M-1,1)]; %I3 and I4 are for theta
+I4=[zeros(M-1,1),eye(M-1)];
+Jx_phi=kron(I1,eye(M));
+Jy_phi=kron(I2,eye(M));
+Jx_theta=kron(eye(m),I3);
+Jy_theta=kron(eye(m),I4);
+
+% Estimate diagonal phi
+Ux_phi=Jx_phi*Utr;
+Uy_phi=Jy_phi*Utr;
+
+% Estimate digonal theta
+Ux_theta=Jx_theta*Utr;
+Uy_theta=Jy_theta*Utr;
+
+% Combine 
+E_phi=pinv(Ux_phi)*Uy_phi;
+E_theta=pinv(Ux_theta)*Uy_theta;
+E=[E_phi E_theta];
+
+% Using the given joint_diag file
+[~,D]=joint_diag(E,1.0e-8);
+T=diag(D);
+f = abs(angle(T))/(2*pi);
+frequencies = sort(f, 'descend');
+f = frequencies;
+
+W=diag(D(1:2,3:4));
+angles = (angle(W))/(pi);
+thetas = asin(angles);
+theta = (180/pi) * thetas;
+angles = sort(theta, 'descend');
+theta = angles;
+end
