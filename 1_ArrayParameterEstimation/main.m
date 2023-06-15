@@ -1,8 +1,8 @@
 %% Q3, implement ESPRIT algorithm
 % Generate data using the genData function
-% [M, N, Delta, theta, f, SNR] = deal(5, 20, 0.5, [-20; 30], [0.1; 0.3], 10);
-% [X, A, S] = genData(M, N, Delta, theta, f, SNR);
-% ESPRIT_freq(X, 2)
+[M, N, Delta, theta, f, SNR] = deal(3, 20, 0.5, [-20; 30], [0.1; 0.12], 60);
+[X, A, S] = genData(M, N, Delta, theta, f, SNR);
+ESPRIT_freq(X, 2)
 %% Zero-forcing beamformer with A is known
 
 % % Obtain estimates of source directions, sort such that signal estimate
@@ -40,26 +40,54 @@
 % xlabel("Theta(degree)")
 % ylabel("|y(theta)|")
 % hold off
+% 
+% N = 500;
+% s = ones([N 1]);
+% %h = [1; 1; -1; -1; 1; 1; -1; -1];
+% h = [1; -1; 1; -1];
+% qpsk_symbols = [-1-1i, 1-1i, -1+1i, 1+1i]./sqrt(2);
+% 
+% for i=1:N
+%     s(i) = qpsk_symbols(randi([1 4]));
+% end
+% 
+% P = 4;
+% sigma = 4.5;
+% X = gendata_conv(s,P,N,sigma);
+% %x = gendata_conv_2(s,P,N,sigma);
+% rank(X)
+% 
+% 
+% [S, s_hat, s_raw] = zeroForcingReceiver(h, X, N);
+% [S_wf, s_hat_wf, s_raw_wf] = WienerReceiver(X, h,sigma, N);
+% figure;
+% hold on;
+% plot(s_raw_wf, '.', 'color', 'blue', 'MarkerSize', 5);
+% plot(qpsk_symbols, 'x', 'color', 'red', 'MarkerSize', 15, 'LineWidth', 3);
+% title("Raw estimates of Wiener receiver (N=500, P=8)")
+% xlabel("Re(s)")
+% ylabel("Im(s)")
+% xlim([-1.5,  1.5]);
+% ylim([-1.5,  1.5]);
+% hold off;
+% 
+% mse_wiener = mean(abs(s-s_raw_wf).^2)
+% 
+% figure;
+% hold on;
+% plot(s_raw, '.', 'color', 'blue', 'MarkerSize', 5);
+% plot(qpsk_symbols, 'x', 'color', 'red', 'MarkerSize', 15, 'LineWidth', 3);
+% title("Raw estimates of Zero-Forcing receiver (N=500, P=8)")
+% xlabel("Re(s)")
+% ylabel("Im(s)")
+% xlim([-1.5,  1.5]);
+% ylim([-1.5,  1.5]);
+% hold off;
+% 
+% mse_zero = mean(abs(s-s_raw).^2)
+% 
 
-N = 500;
-s = ones([N 1]);
 
-qpsk_symbols = [-1-1i, 1-1i, -1+1i, 1+1i]./sqrt(2);
-
-for i=1:N
-    s(i) = qpsk_symbols(randi([1 4]));
-end
-
-P = 4;
-sigma = 0.0;
-X = gendata_conv(s,P,N,sigma);
-% x = gendata_conv_2(s,P,N,sigma);
-rank(X)
-
-h = [1; -1; 1; -1];
-nul = zeros([4 1]);
-H = [h, nul; nul, h]
-S_hat = pinv(H)*X;
 % 
 % 
 % %% Wiener receiver
