@@ -1,142 +1,142 @@
 % %% Q3, implement ESPRIT algorithm
 % % Generate data using the genData function
-% [M, N, Delta, theta, f, SNR] = deal(3, 20, 0.5, [-20; 30], [0.1, 0.12]', 10);
-% [X, A, S] = genData(M, N, Delta, theta, f, SNR);
+[M, N, Delta, theta, f, SNR] = deal(3, 20, 0.5, [-20; 30], [0.1, 0.12]', 10);
+[X, A, S] = genData(M, N, Delta, theta, f, SNR);
 % % ESPRIT_freq(X, 2)
 % %% Zero-forcing beamformer with A is known 
 % 
 % % % Obtain estimates of source directions, sort such that signal estimate
 % % % will have the same order
 % 
-% %BEAMFORMING ESPRIT DoA
-% DoA = sort(esprit(X,2));
-% % Construct zero-forcing beamformer
-% phi = 2*pi*Delta*sin(deg2rad(DoA));
-% A_hat = exp(1i*(0:M-1)'.*phi');
-% W = pinv(A_hat);
-% % Apply beamformer to obtain an estimate of S
-% S_hat = W*X;
-% 
-% %% Zero-forcing beamformer with S is known
-% 
-% % Obtain estimates of source directions, sort such that signal estimate
-% % will have the same order
-% % Construct zero-forcing beamformer
-% % Apply beamformer to obtain an estimate of S
-% A_hat = X*pinv(S_hat);      
-% 
-% i=1
-% for theta=-90:90
-%     exponent = 2*pi*Delta*sin(deg2rad(theta));
-%     a = exp(1i*(0:M-1)'.*exponent);
-%     y(i, :) = abs(W*a);
-%     i = i+1;
-% end
-% 
-% figure
-% title("DoA esprit")
-% hold on
-% plot(-90:90, y(:, 1))
-% plot(-90:90, y(:, 2))
-% xlabel("Theta(degree)")
-% ylabel("|y(theta)|")
-% hold off
-% 
-% 
-% freq = sort(espritfreq(X,2));
-% S_hat_freq =  exp(1i*2*pi*freq*(0:N-1));
-% A_hat = X*S_hat_freq'*inv(S_hat_freq*S_hat_freq');
-% % W_herm= pinv(A_hat);
+%BEAMFORMING ESPRIT DoA
+DoA = sort(esprit(X,2));
+% Construct zero-forcing beamformer
+phi = 2*pi*Delta*sin(deg2rad(DoA));
+A_hat = exp(1i*(0:M-1)'.*phi');
+W = pinv(A_hat);
+% Apply beamformer to obtain an estimate of S
+S_hat = W*X;
+
+%% Zero-forcing beamformer with S is known
+
+% Obtain estimates of source directions, sort such that signal estimate
+% will have the same order
+% Construct zero-forcing beamformer
+% Apply beamformer to obtain an estimate of S
+A_hat = X*pinv(S_hat);      
+
+i=1
+for theta=-90:90
+    exponent = 2*pi*Delta*sin(deg2rad(theta));
+    a = exp(1i*(0:M-1)'.*exponent);
+    y(i, :) = abs(W*a);
+    i = i+1;
+end
+
+figure
+title("DoA esprit")
+hold on
+plot(-90:90, y(:, 1))
+plot(-90:90, y(:, 2))
+xlabel("Theta(degree)")
+ylabel("|y(theta)|")
+hold off
+
+
+freq = sort(espritfreq(X,2));
+S_hat_freq =  exp(1i*2*pi*freq*(0:N-1));
+A_hat = X*S_hat_freq'*inv(S_hat_freq*S_hat_freq');
+W_herm= pinv(A_hat);
 % W_herm = S_hat_freq*X'*inv(X*X')
-% 
-% j=1
-% for theta=-90:90
-%     exponent = 2*pi*Delta*sin(deg2rad(theta));
-%     a = exp(1i*(0:M-1)'.*exponent);
-%     y_freq(j, :) = abs(W_herm*a);
-%     j = j+1;
-% end
-% 
-% figure
-% title("Frequency Esprit")
-% hold on
-% plot(-90:90, y_freq(:, 1))
-% plot(-90:90, y_freq(:, 2))
-% xlabel("Theta(degree)")
-% ylabel("|y(theta)|")
-% hold off
-% 
+
+j=1
+for theta=-90:90
+    exponent = 2*pi*Delta*sin(deg2rad(theta));
+    a = exp(1i*(0:M-1)'.*exponent);
+    y_freq(j, :) = abs(W_herm*a);
+    j = j+1;
+end
+
+figure
+title("Frequency Esprit")
+hold on
+plot(-90:90, y_freq(:, 1))
+plot(-90:90, y_freq(:, 2))
+xlabel("Theta(degree)")
+ylabel("|y(theta)|")
+hold off
+
 %% Make a plot of the estimation performance of the three algorithms (mean values and
 %% standard deviations of the estimated angles and frequencies)
 
-
-avg_AoA_list = zeros(2, 11);
-avg_freq_list = zeros(1, 11);
-SNR_list = linspace(0,20,11);
-
-
+% 
+% avg_AoA_list = zeros(2, 11);
+% avg_freq_list = zeros(1, 11);
+% SNR_list = linspace(0,20,11);
+% 
+% 
 % AoA_list = [];
 % freq_list = [];
-
- AoA_list = zeros(2,11,1000);
- freq_list = zeros(2,11,1000);
-    
-    
-for j = 1:1000
-   
-    for i = 1:11
-        SNR_instance = SNR_list(i);
-        [M, N, Delta, theta, f, SNR] = deal(3, 20, 0.5, [-20; 30], [0.1, 0.12]', SNR_instance);
-        [X, A, S] = genData(M, N, Delta, theta, f, SNR);
-        % AoA = sort(esprit(X,2));
-        % freq = espritfreq(X, 2);
-        AoA_list(:,i,j) = sort(esprit(X,2));
-        freq_list(:,i,j) = sort(espritfreq(X, 2));
-        
-            
-        % AoA_list = [AoA_list, AoA];
-        % freq_list = [freq_list, freq];
-    end
-
-    
-    % avg_AoA_list = avg_AoA_list + AoA_list;
-    % avg_freq_list = avg_freq_list + freq_list;
-end
-
-avg_AoA_list = mean(AoA_list,3);
-avg_freq_list = mean(freq_list,3);
-
-
-std_AoA_list = std(squeeze(AoA_list(1,:,:)),0,2)
-std_freq_list = std(squeeze(freq_list(1,:,:)),0,2)
+% 
+%  AoA_list = zeros(2,11,1000);
+%  freq_list = zeros(2,11,1000);
+% 
+% 
+% for j = 1:1000
+% 
+%     for i = 1:11
+%         SNR_instance = SNR_list(i);
+%         [M, N, Delta, theta, f, SNR] = deal(3, 20, 0.5, [-20; 30], [0.2, 0.3]', SNR_instance);
+%         [X, A, S] = genData(M, N, Delta, theta, f, SNR);
+%         % AoA = sort(esprit(X,2));
+%         % freq = espritfreq(X, 2);
+%         AoA_list(:,i,j) = sort(esprit(X,2));
+%         freq_list(:,i,j) = sort(espritfreq(X, 2));
+% 
+% 
+%         % AoA_list = [AoA_list, AoA];
+%         % freq_list = [freq_list, freq];
+%     end
+% 
+% 
+%     % avg_AoA_list = avg_AoA_list + AoA_list;
+%     % avg_freq_list = avg_freq_list + freq_list;
+% end
+% 
+% avg_AoA_list = mean(AoA_list,3);
+% avg_freq_list = mean(freq_list,3);
+% 
+% 
+% std_AoA_list = std(squeeze(AoA_list(1,:,:)),0,2)
+% std_freq_list = std(squeeze(freq_list(1,:,:)),0,2)
 
 % std_freq_list = std(freq_list);
 % avg_AoA_list = avg_AoA_list ./ 1000;
 % avg_freq_list = avg_freq_list ./ 1000;
 
 %plot AoA
-figure
-title("Mean values angle estimations")
-hold on
-plot(SNR_list,avg_AoA_list)
+% figure
+% title("Mean values angle estimations")
+% hold on
+% plot(SNR_list,avg_AoA_list)
 
 %plot freq
-figure
-title("Mean values frequency estimations")
-hold on
-plot(SNR_list,avg_freq_list)
+% figure
+% title("Mean values frequency estimations")
+% hold on
+% plot(SNR_list,avg_freq_list)
 
 %plot std AoA
-figure
-title("Std values angle estimations")
-hold on
-plot(SNR_list,std_AoA_list)
+% figure
+% title("Std values angle estimations")
+% hold on
+% plot(SNR_list,std_AoA_list)
 
 %plot std freq
-figure
-title("Std values frequency estimations")
-hold on
-plot(SNR_list,std_freq_list)
+% figure
+% title("Std values frequency estimations")
+% hold on
+% plot(SNR_list,std_freq_list)
 
 
 
