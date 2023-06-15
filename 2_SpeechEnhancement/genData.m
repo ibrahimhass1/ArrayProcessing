@@ -44,25 +44,29 @@ function [s, x] = genData(speech_file, interference_file, ...
     end
 
     %% Add noise in time domain 
-%     switch lower(noise_type)
-%         case 'white'
-%             [n_t] = randn(length(x_t), 4);
-%         case 'non-stationary'
-%             [n_t, ~] = audioread('data\aritificial_nonstat_noise.wav');
-%         case 'speech_shaped'
-%             [n_t, ~] = audioread('data\Speech_shaped_noise.wav');
-%         otherwise
-%             error('PARAMETER ERROR: noise type not reconized')
+    switch lower(noise_type)
+        case 'white'
+            [n_t] = .0001.*randn(4, length(x_t));
+        case 'non-stationary'
+            [n_t, ~] = audioread('data\aritificial_nonstat_noise.wav');
+        case 'speech_shaped'
+            [n_t, ~] = audioread('data\Speech_shaped_noise.wav');
+        otherwise
+            error('PARAMETER ERROR: noise type not reconized')
+    end
+
+%     for i=1:size(h_target, 1)
+%         x_t(i, :) = x_t(i, :); % + n_t(1: length(x_t))';
 %     end
 
-    for i=1:size(h_target, 1)
-        x_t(i, :) = x_t(i, :); % + n_t(1: length(x_t))';
-    end
+
+    x_t = x_t + n_t
+
 
 
     %% Take STFT of clean and received signal
     
-    s=s_t';
+    s = s_t';
     x = x_t(:, 1:length(s_t));
 
 
