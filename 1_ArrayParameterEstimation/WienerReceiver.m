@@ -6,7 +6,7 @@ H = [h,nul;nul,h];
 [m, n] = size(H*H');
 fprintf('The matrix has %d rows and %d columns.\n', m, n);
 % +  wgn(2*length(h),2*length(h),0.5^2)
-Wf = pinv(H*H'+ sigma^2*eye(2*length(h)))*H;
+Wf = pinv(H*H'+ sigma^2*eye(2*length(h)))*H
 
 S_hat_wiener = Wf'*X;
 

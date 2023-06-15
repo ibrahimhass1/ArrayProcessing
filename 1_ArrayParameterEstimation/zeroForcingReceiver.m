@@ -6,7 +6,7 @@ P = length(h)
 % Construct H
 nul = zeros([P 1]);
 H = [h, nul; nul, h];
-
+pinv(H)
 % Calculate estimate for S
 S_hat = pinv(H)*X;
 

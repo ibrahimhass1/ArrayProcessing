@@ -17,6 +17,18 @@ function [s, x] = genData(speech_file, interference_file, ...
     for i=1:size(h_target, 1)
         x_t(i, :) = conv(s_t, h_target(i, :));
     end
+    
+
+    % Detect parts with active speech
+     
+
+    signal_mean = mean(mean(abs(x_t), 2));
+
+    signal_power = mean(mean(x_t(abs(x_t) > signal_mean).^2, 2));
+
+    noise_power = signal_power/(10^(snr/10));
+
+
 
     %% Add interference in time domain
     % Add interference by convolving the interference speech signals with
@@ -46,7 +58,7 @@ function [s, x] = genData(speech_file, interference_file, ...
     %% Add noise in time domain 
     switch lower(noise_type)
         case 'white'
-            [n_t] = .0001.*randn(4, length(x_t));
+            [n_t] = noise_power.*randn(4, length(x_t));
         case 'non-stationary'
             [n_t, ~] = audioread('data\aritificial_nonstat_noise.wav');
         case 'speech_shaped'
@@ -60,7 +72,7 @@ function [s, x] = genData(speech_file, interference_file, ...
 %     end
 
 
-    x_t = x_t + n_t
+    x_t = x_t + n_t;
 
 
 
