@@ -4,26 +4,42 @@
 
 %% Obtained Short-Time Fourier transform of time domains signals
 s = STFT(s_t, 16000, 20, 50, 'hamming');
-%x = STFT(x_t, 16000, 20, 50, 'hamming');
+x = STFT(x_t, 16000, 20, 50, 'hamming');
 
 
 %% Apply processing
-%
-%
-%
+
+% Set smoothing parameter
+a = .9;
+
+% Store most recent estimate of autocorrelation matrix per bin 
+Rx = zeros([size(x, 2) size(x, 1) size(x, 1)]);
+
+% Iterate over all frames
+for l = 1:size(x, 3)
+    l
+    % Update estimate for each frequency bin
+    for k = 1:size(x, 2)
+        Rx(k, :, :) = a.*squeeze(Rx(k, :, :)) + (1-a).*x(:, k, l)*x(:, k, l)';
+        % Obtain acoestic transfer function from Rx 
+        [U, ~] = eig(squeeze(Rx(k, :, :)));
+        a = U(:, 1);
+        s(1, k, l) = a'*x(:, k, l);
+    end
+end
+
 
 
 
 %% Reconstruct signal, by taking the inverse Short-Time Fourier transform
-s_hat = iSTFT(s, 16000, 20, 50);
+s_hat = iSTFT(s(1, :, :), 16000, 20, 50);
 
 
 
 
 
-
+%% Play audio
 Fs = 16000;
-
-soundsc(s_hat(4,Fs:3*Fs), Fs)
+soundsc(s_hat(Fs:5*Fs), Fs)
 
 
