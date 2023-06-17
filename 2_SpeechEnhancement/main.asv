@@ -1,27 +1,17 @@
 %% Obtain clean speech signal, and generate noise microphone signals
-[s_t, x_t] = genData('data\clean_speech.wav', 'data\babble_noise.wav', ...
-    0, 'white', .0002);
-
-
+[s_t, x_t] = genData('data\clean_speech.wav', 'data\babble_noise.wav'1);
 
 %% Obtained Short-Time Fourier transform of time domains signals
 s = STFT(s_t, 16000, 20, 50, 'hamming');
 x = STFT(x_t, 16000, 20, 50, 'hamming');
-size(x)
-
 
 % Store clean s as reference for SNR calculations
 s_clean = s;
 
-
-
-
-sigma_n = .0025;
 % Add spatial white noise for each frequency bin
+sigma_n = .0025;
 for k=1:size(x, 2)
     x(:, k, :) = squeeze(x(:, k, :)) + sigma_n.*(randn([size(x, 1) size(x, 3)]) + 1i* randn([size(x, 1) size(x, 3)]))./sqrt(2);
-  % x(:, k, :) = squeeze(x(:, k, :)) + wgn(4, 624, 1, 'linear', 'complex');
-
 end
 % 
 % s = squeeze(s);
@@ -34,7 +24,7 @@ end
 %% Apply processing
 
 % Set smoothing parameter
-alpha = .5;
+alpha = .1;
 
 % Store most recent estimate of autocorrelation matrix per bin 
 Rx = zeros([size(x, 2) size(x, 1) size(x, 1)]);
@@ -43,6 +33,7 @@ Rn = zeros([size(x, 2) size(x, 1) size(x, 1)]);
 
 fft_coef_sum = zeros([size(x, 3) 1]);
 
+SNR = zeros([1 size(x, 3)]);
 
 % Iterate over all frames
 for l = 1:size(x, 3)
@@ -94,11 +85,13 @@ for l = 1:size(x, 3)
     end
 
     % Calculate clean signal power
-    clean_signal = 
+    clean_signal = sum(abs(s_clean(1, :, l)).^2);
 
     % Calculate beamformer output power
-
+    output_signal = sum(abs(s(1, :, l)).^2);
+    
     % Calculate SNR
+    SNR(l) = clean_signal/(abs(clean_signal-output_signal));
 end
 
 s_hat = iSTFT(s(1, :, :), 16000, 20, 50);
@@ -110,14 +103,16 @@ MSE = mean(abs(s_t(1:length(s_hat_2))' - s_hat_2).^2);
 
 
 figure
-plot(s_hat)
-title('S hat')
+plot((1:length(s_hat))./Fs,s_hat)
+title('Received signal at one of the microphones')
+xlabel("Time(s)")
 
 figure
-plot(x_t(1, :))
-title("X_t")
+plot((1:length(s_t))./Fs, s_t)
+title("Clean target signal")
+xlabel("Time(s)")
 
-
+plot(10*log10(SNR))
 
 % %% Reconstruct signal, by taking the inverse Short-Time Fourier transform
 % s_hat = iSTFT(x(1, :, :), 16000, 20, 50);
