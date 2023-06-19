@@ -1,5 +1,5 @@
 %% Obtain clean speech signal, and generate noise microphone signals
-[s_t, x_t] = genData('/Users/ibrahimhassan/Library/CloudStorage/OneDrive-Personal/Documents/School work/Year 4/Documents/Array processing/Project/2_SpeechEnhancement/data/clean_speech.wav', '/Users/ibrahimhassan/Library/CloudStorage/OneDrive-Personal/Documents/School work/Year 4/Documents/Array processing/Project/2_SpeechEnhancement/data/babble_noise.wav', 0);
+[s_t, x_t] = genData('data\clean_speech.wav', 'data\babble_noise.wav', 0);
 
 % s_t = s_t(1:100000);
 % x_t = x_t(1:100000);
@@ -55,7 +55,7 @@ for l = 1:size(x, 3)
             % Update Rx
             Rx(k, :, :) = alpha.*squeeze(Rx(k, :, :)) + (1-alpha).*x(:, k, l)*x(:, k, l)';
             % Keep Rn
-             Rx(k, :, :) = Rx(k, :, :);
+            Rx(k, :, :) = Rx(k, :, :);
 
             Rn_root(k, :, :) = inv(sqrtm(squeeze(Rn(k, :, :))));
             X_tilde = squeeze(Rn_root(k,:,:))*x(:, k, l);
@@ -94,17 +94,18 @@ for l = 1:size(x, 3)
         [U, V] = eig(squeeze(Rs(k, :, :)));
         a = U(:, 1);
 
-        w = a./(a'*a); 
+       % w = a./(a'*a); 
 
         %% MVDR beamformer
-        %w = (Rx_inv*a)/(a'*Rx_inv*a);  
+        Rx_inv = inv(squeeze(Rx(k, :, :)));
+        w_mvdr = (Rx_inv*a)/(a'*Rx_inv*a);  
 
         %% Multi-channel wiener 
         %w = (Rx_inv*a)/(a'*Rx_inv*a);  
-        %w = sigma_s /(sigma_s+inv(a'*Rx_inv*a)) * w; 
+        w_wf = sigma_s /(sigma_s+inv(a'*Rx_inv*a)) * w_mvdr; 
 
         %% Apply beamformer
-        s(1, k, l) = w'*x(:, k, l);
+        s(1, k, l) = w_wf'*x(:, k, l);
 
         end
 
