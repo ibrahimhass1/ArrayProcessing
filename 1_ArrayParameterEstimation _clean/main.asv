@@ -129,50 +129,50 @@
 % [theta, freq] = joint(X, 2, 5)
 
 %% Comparison, Q1 - Plot of the estimation performance of the three algorithms
-% avg_AoA_list = zeros(2, 11);
-% avg_freq_list = zeros(1, 11);
-% avg_AoA_list_joint = zeros(2, 11);
-% avg_freq_list_joint = zeros(1, 11);
-% SNR_list = linspace(0,20,11)
-% 
-% % AoA_list = [];
-% % freq_list = [];
-% 
-% AoA_list = zeros(2,11,1000);
-% freq_list = zeros(2,11,1000);
-% AoA_list_joint = zeros(2,11,1000);
-% freq_list_joint = zeros(2,11,1000);
-%     
-% % Take 1000 test runs 
-% for j = 1:1000
-%     % Run for each SNR value
-%     for i = 1:11
-%         SNR_instance = SNR_list(i);
-%         [M, N, Delta, theta, f, SNR] = deal(3, 20, 0.5, [-20; 30], [0.1; 0.12], SNR_instance);
-%         [X, A, S] = genData(M, N, Delta, theta, f, SNR);
-%         AoA_list(:,i,j) = sort(esprit(X,2));
-%         freq_list(:,i,j) = sort(espritfreq(X, 2));
-%         [AoA_list_joint(:,i,j), freq_list_joint(:,i,j)] = joint(X, 2, 5);
-%     end
-% end
-% 
-% avg_AoA_list = mean(AoA_list,3);
-% avg_freq_list = mean(freq_list,3);
-% avg_AoA_list_joint = mean(AoA_list_joint,3);
-% avg_freq_list_joint = mean(freq_list_joint,3);
-% 
-% std_AoA_list = std(squeeze(AoA_list(1,:,:)),0,2)
-% std_freq_list = std(squeeze(freq_list(1,:,:)),0,2)
-% 
-% std_AoA_list_joint = std(squeeze(AoA_list_joint(1,:,:)),0,2)
-% std_freq_list_joint = std(squeeze(freq_list_joint(1,:,:)),0,2)
-% 
-% %plot AoA
-% figure
-% title("Mean values angle estimations")
-% hold on
-% plot(SNR_list, avg_AoA_list)
-% plot(SNR_list, avg_AoA_list_joint)
+avg_AoA_list = zeros(2, 11);
+avg_freq_list = zeros(1, 11);
+avg_AoA_list_joint = zeros(2, 11);
+avg_freq_list_joint = zeros(1, 11);
+SNR_list = linspace(0,20,11)
+
+% AoA_list = [];
+% freq_list = [];
+
+AoA_list = zeros(2,11,1000);
+freq_list = zeros(2,11,1000);
+AoA_list_joint = zeros(2,11,1000);
+freq_list_joint = zeros(2,11,1000);
+    
+% Take 1000 test runs 
+for j = 1:1000
+    % Run for each SNR value
+    for i = 1:11
+        SNR_instance = SNR_list(i);
+        [M, N, Delta, theta, f, SNR] = deal(3, 20, 0.5, [-20; 30], [0.1; 0.12], SNR_instance);
+        [X, A, S] = genData(M, N, Delta, theta, f, SNR);
+        AoA_list(:,i,j) = sort(esprit(X,2));
+        freq_list(:,i,j) = sort(espritfreq(X, 2));
+        [AoA_list_joint(:,i,j), freq_list_joint(:,i,j)] = joint(X, 2, 5);
+    end
+end
+
+avg_AoA_list = mean(AoA_list,3);
+avg_freq_list = mean(freq_list,3);
+avg_AoA_list_joint = mean(AoA_list_joint,3);
+avg_freq_list_joint = mean(freq_list_joint,3);
+
+std_AoA_list = std(squeeze(AoA_list(1,:,:)),0,2)
+std_freq_list = std(squeeze(freq_list(1,:,:)),0,2)
+
+std_AoA_list_joint = std(squeeze(AoA_list_joint(1,:,:)),0,2)
+std_freq_list_joint = std(squeeze(freq_list_joint(1,:,:)),0,2)
+
+%plot AoA
+figure
+title("Mean values angle estimations")
+hold on
+plot(SNR_list, avg_AoA_list)
+plot(SNR_list, avg_AoA_list_joint)
 
 % %plot AoA
 % figure
@@ -181,36 +181,31 @@
 % plot(SNR_list, avg_AoA_list_joint)
 
 %plot AoA
-figure
-title("Joint angle estimations, mean (N=1000)")
-hold on
-plot(SNR_list, avg_AoA_list_joint)
-xlabel("SNR(dB)")
+% figure
+% title("Mean values angle estimations joint")
+% hold on
+% plot(SNR_list, avg_AoA_list_joint)
 
 %plot freq
 figure
-title("Joint frequency estimations, mean (N=1000)")
+title("Mean values frequency estimations")
 hold on
 %plot(SNR_list, avg_freq_list)
 plot(SNR_list, avg_freq_list_joint)
-xlabel("SNR(dB)")
 
 %plot std AoA
 figure
-title("Joint angle estimations, standard deviation (N=1000)")
+title("Std values angle estimations")
 hold on
 %plot(SNR_list, std_AoA_list)
 plot(SNR_list, std_AoA_list_joint)
-xlabel("SNR(dB)")
 
 %plot std freq
 figure
-title("Joint frequency estimations, standard deviation (N=1000)")
+title("Std values frequency estimations")
 hold on
 %plot(SNR_list, std_freq_list)
 plot(SNR_list, std_freq_list_joint)
-xlabel("SNR(dB)")
-
 
 %% Comparison, Q2 - Compute zero-forcing beamformers, noiseless check
 % % Generate data using the genData function
