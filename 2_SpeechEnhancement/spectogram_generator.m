@@ -8,7 +8,7 @@ overlap = 160; % Overlap length between windows
 nfft = 1024; % FFT length
 
 % Compute and display the spectrogram
-spectrogram(s_t./sum(s_t.^2), windowSize, overlap, nfft, Fs, 'yaxis');
+spectrogram(s_t(1,:,:)./sum(s_t(1,:,:).^2), windowSize, overlap, nfft, Fs, 'yaxis');
 colorbar; % Add colorbar for intensity scale
 
 %Specify the color range
@@ -16,4 +16,4 @@ cmin = -160; % Minimum color value in dB
 cmax = -80; % Maximum color value in dB
 caxis([cmin cmax]);
 
-title('Spectrogram of noisy signal (normalized)')
+title('Spectrogram of clean input (normalized)')
