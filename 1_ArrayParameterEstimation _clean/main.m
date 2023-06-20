@@ -123,6 +123,11 @@
 % [X, A, S] = genData(M, N, Delta, theta, f, SNR);
 % freq = espritfreq(X, 2)
 
+%% Joint estimation of dirextions and frequencies, Q3 - Noiseless check
+% [M, N, Delta, theta, f, SNR] = deal(5,20, 0.5, [-20; 30], [0.1; 0.3], 160);
+% [X, A, S] = genData(M, N, Delta, theta, f, SNR);
+% [theta, freq] = joint(X, 2, 5)
+
 %% Comparison, Q1 - Plot of the estimation performance of the three algorithms
 % avg_AoA_list = zeros(2, 11);
 % avg_freq_list = zeros(1, 11);
